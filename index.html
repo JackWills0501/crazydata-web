@@ -6,92 +6,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    /* ---------- Base Styles ---------- */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #f5f5f7;
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
+    .header {
+      width: 100%;
+      background: #fff;
+      padding: 18px 16px 12px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
     h1 {
-      text-align: center;
-      margin: 8px 0 4px;
-      font-size: 1.8rem;
-      flex-shrink: 0;
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
     }
 
     .status {
-      text-align: center;
       font-size: 13px;
-      margin-bottom: 12px;
-      flex-shrink: 0;
-      padding: 10px 12px;
     }
 
     .live {
-      color: green;
+      color: #1e8e3e;
       font-weight: 600;
     }
 
     .offline {
-      color: red;
+      color: #c62828;
       font-weight: 600;
     }
 
-    /* ---------- Container ---------- */
-    .container {
-      width: 100%;
-      max-width: 1000px;
+    .controls {
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 10px;
-      flex-shrink: 0;
+      width: 100%;
+      max-width: 480px;
+      margin-top: 6px;
     }
 
-    /* ---------- Search ---------- */
     #search {
       width: 100%;
-      /* full width of container */
-      max-width: 400px;
-      /* shrink on large screens */
-      padding: 10px 12px;
+      padding: 12px 14px;
       font-size: 14px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid #ddd;
-      margin: 0 auto 10px auto;
-      box-sizing: border-box;
+      background: #fafafa;
     }
 
-    /* ---------- List ---------- */
+    .menu-bar {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      background: #f0f0f3;
+      padding: 6px;
+      border-radius: 999px;
+    }
+
+    .menu-item {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+      color: #444;
+      transition: 0.2s;
+    }
+
+    .menu-item.active {
+      background: #111;
+      color: #fff;
+      font-weight: 600;
+    }
+
     .list {
-      width: 1000px;
-      /* fixed width */
-      max-width: 100%;
-      /* responsive on smaller screens */
+      width: 100%;
+      max-width: 1000px;
       background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-      overflow-y: auto;
+      border-radius: 18px;
+      margin: 14px 12px 24px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
       flex: 1;
-      box-sizing: border-box;
     }
 
     .row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
+      padding: 14px 18px;
       border-bottom: 1px solid #eee;
-      transition: background 0.2s;
     }
 
-    .row:hover {
-      background: #f9f9f9;
+    .row:last-child {
+      border-bottom: none;
     }
 
     .left {
@@ -103,6 +129,7 @@
     .name {
       font-weight: 500;
       font-size: 15px;
+      color: #111;
     }
 
     .badge {
@@ -134,53 +161,33 @@
       font-size: 14px;
     }
 
-    /* ---------- Responsive Adjustments ---------- */
-    @media (max-width: 1024px) {
-      .list {
-        width: 95%;
-      }
-    }
-
-    @media (max-width: 768px) {
-      #search {
-        width: 95%;
-      }
-
+    @media (max-width: 700px) {
       .row {
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
-      }
-
-      .price {
-        font-size: 13px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      .name {
-        font-size: 14px;
-      }
-
-      .price {
-        font-size: 12px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!-- <h1>Crazy Designs</h1> -->
-  <div class="status">
-    Status: <span id="statusBadge" class="offline">● Offline</span>
-  </div>
+  <div class="header">
+    <h1>Crazy Designs</h1>
+    <div class="status">
+      Status: <span id="statusBadge" class="offline">● Offline</span>
+    </div>
 
-  <div class="container">
-    <input id="search" placeholder="Search by name…" autocomplete="off" />
+    <div class="controls">
+      <input id="search" placeholder="Search by name…" autocomplete="off" />
+
+      <div class="menu-bar">
+        <div class="menu-item active" data-category="all">All</div>
+        <div class="menu-item" data-category="avnee">Avnee</div>
+        <div class="menu-item" data-category="raagvi">Raagvi</div>
+        <div class="menu-item" data-category="crazy">Crazy</div>
+      </div>
+    </div>
   </div>
 
   <div class="list" id="list"></div>
@@ -204,11 +211,15 @@
     const list = document.getElementById("list");
     const searchInput = document.getElementById("search");
     const statusBadge = document.getElementById("statusBadge");
+    const menuItems = document.querySelectorAll(".menu-item");
 
     let allItems = [];
+    let activeCategory = "all";
 
     function sortByName(items) {
-      return items.sort((a, b) => (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase()));
+      return items.sort((a, b) =>
+        (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase())
+      );
     }
 
     function badgeClass(category) {
@@ -218,6 +229,21 @@
       if (c === "raagvi") return "badge raagvi";
       if (c === "crazy") return "badge crazy";
       return "badge";
+    }
+
+    function applyFilters() {
+      const searchValue = searchInput.value.toLowerCase();
+
+      const filtered = allItems.filter(item => {
+        const matchesSearch = (item.name || "").toLowerCase().includes(searchValue);
+        const matchesCategory =
+          activeCategory === "all" ||
+          (item.designCategory || "").toLowerCase() === activeCategory;
+
+        return matchesSearch && matchesCategory;
+      });
+
+      render(filtered);
     }
 
     function render(items) {
@@ -242,8 +268,8 @@
       allItems = [];
       snapshot.forEach(doc => allItems.push(doc.data()));
       allItems = sortByName(allItems);
-      render(allItems);
-      statusBadge.textContent = "● Live";
+      applyFilters();
+      statusBadge.textContent = "● Online";
       statusBadge.className = "live";
     }, error => {
       statusBadge.textContent = "● Offline";
@@ -251,10 +277,15 @@
       console.error(error);
     });
 
-    searchInput.addEventListener("input", e => {
-      const value = e.target.value.toLowerCase();
-      const filtered = allItems.filter(item => (item.name || "").toLowerCase().includes(value));
-      render(filtered);
+    searchInput.addEventListener("input", applyFilters);
+
+    menuItems.forEach(item => {
+      item.addEventListener("click", () => {
+        menuItems.forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+        activeCategory = item.dataset.category;
+        applyFilters();
+      });
     });
   </script>
 </body>
