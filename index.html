@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Crazydata</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f7;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .status {
+      text-align: center;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .live {
+      color: green;
+      font-weight: 600;
+    }
+
+    .offline {
+      color: red;
+      font-weight: 600;
+    }
+
+    #search {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 16px;
+    }
+
+    .list {
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+    }
+
+    .name {
+      font-weight: 500;
+      color: #111;
+    }
+
+    .price {
+      font-weight: 600;
+      color: #0a7a3d;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Crazy Designs</h1>
+  <div class="status">
+    Status: <span id="statusBadge" class="offline">● Offline</span>
+  </div>
+
+  <input id="search" placeholder="Search by name…" />
+  <div class="list" id="list"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_cslmXHjsYvkaLDQvA8M7nUZT0cxnC7s",
+      authDomain: "crazycolorsapp.firebaseapp.com",
+      projectId: "crazycolorsapp",
+      storageBucket: "crazycolorsapp.appspot.com",
+      messagingSenderId: "566455022182",
+      appId: "1:566455022182:web:af4ab08e2e5a7f5a21b3a7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const list = document.getElementById("list");
+    const searchInput = document.getElementById("search");
+    const statusBadge = document.getElementById("statusBadge");
+
+    let allItems = [];
+
+    function sortByName(items) {
+      return items.sort((a, b) => {
+        const A = (a.name || "").toLowerCase();
+        const B = (b.name || "").toLowerCase();
+        return A.localeCompare(B);
+      });
+    }
+
+    function render(items) {
+      list.innerHTML = "";
+      items.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `
+          <div class="name">${item.name || "No Name"}</div>
+          <div class="price">₹ ${item.price || "-"}</div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    const colRef = collection(db, "SingleDesign");
+
+    onSnapshot(colRef, snapshot => {
+      allItems = [];
+      snapshot.forEach(doc => allItems.push(doc.data()));
+
+      allItems = sortByName(allItems);
+      render(allItems);
+
+      // 🟢 Live badge
+      statusBadge.textContent = "● Live";
+      statusBadge.className = "live";
+    }, error => {
+      // 🔴 Offline badge
+      statusBadge.textContent = "● Offline";
+      statusBadge.className = "offline";
+      console.error(error);
+    });
+
+    // 🔍 Search only by name
+    searchInput.addEventListener("input", e => {
+      const value = e.target.value.toLowerCase();
+      const filtered = allItems.filter(item =>
+        (item.name || "").toLowerCase().includes(value)
+      );
+      render(filtered);
+    });
+  </script>
+</body>
+
+</html>
